@@ -4,13 +4,16 @@
 
 .App-logo {
   height: 40vmin;
-  pointer-events: none;
+  transition-property: transform;
+  transition-duration: 1s;
+  transition-timing-function: ease-in;
+  transition-delay: 0;
+  transform: rotate(0deg);
+  
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.App-logo:hover {
+  transform: rotate(180deg);
 }
 
 .App-header {
