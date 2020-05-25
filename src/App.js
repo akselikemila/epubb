@@ -19,6 +19,12 @@ function App() {
           Hello World!
         </a>
       </header>
+      <div className="App-sidebar">
+        <ul>
+          <li><a href="https://yle.fi/">Hello</a></li>
+          <li><a href="file:///c:/WINDOWS/clock.avi">World</a></li>
+        </ul>
+      </div>
     </div>
   );
 }
