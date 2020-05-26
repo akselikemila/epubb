@@ -18,7 +18,7 @@ class App extends React.Component {
   }
 
   parseZip(event) {
-    var loadedFile = event.target.files[0];
+    const loadedFile = event.target.files[0];
     JSZip.loadAsync(loadedFile).then(zip => {
       this.setState({
         file: loadedFile,
@@ -54,7 +54,7 @@ class App extends React.Component {
         </div>
       )
     }
-    
+
   }
 
 }
