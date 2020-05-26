@@ -1,32 +1,62 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import JSZip from 'jszip';
+import ZipBrowser from './ZipBrowser';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Hello World!
-        </a>
-      </header>
-      <div className="App-sidebar">
-        <ul>
-          <li><a href="https://yle.fi/">Hello</a></li>
-          <li><a href="file:///c:/WINDOWS/clock.avi">World</a></li>
-        </ul>
-      </div>
-    </div>
-  );
+class App extends React.Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      file: null,
+      zipArchive: null,
+    }
+
+    this.parseZip = this.parseZip.bind(this)
+  }
+
+  parseZip(event) {
+    var loadedFile = event.target.files[0];
+    JSZip.loadAsync(loadedFile).then(zip => {
+      this.setState({
+        file: loadedFile,
+        zipArchive: zip
+      })
+    })
+  }
+
+  render() {
+    const loadedFile = this.state.file
+    const zipArchive = this.state.zipArchive
+
+    if (loadedFile) {
+      return (
+        <div className="App">
+          <header className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+            <p>File loaded: {loadedFile.name}</p>
+            <p><input type="file" id="fileInput" onChange={this.parseZip}></input></p>
+          </header>
+          <ZipBrowser zipArchive={loadedFile.name} files={zipArchive} />
+        </div>
+      )
+    }
+    else {
+      return (
+        <div className="App">
+          <header className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+            <p>Please load a zip file</p>
+            <p><input type="file" id="fileInput" onChange={this.parseZip}></input></p>
+          </header>
+        </div>
+      )
+    }
+    
+  }
+
 }
 
 export default App;
