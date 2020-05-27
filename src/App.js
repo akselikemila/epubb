@@ -13,7 +13,8 @@ class App extends React.Component {
     this.state = {
       file: null,
       zipArchive: null,
-      selectedFile: null
+      selectedFile: null,
+      blob: null,
     }
 
     this.parseZip = this.parseZip.bind(this)
@@ -23,6 +24,7 @@ class App extends React.Component {
 
   parseZip(event) {
     const loadedFile = event.target.files[0];
+    console.log(loadedFile)
     JSZip.loadAsync(loadedFile).then(zip => {
       this.setState({
         file: loadedFile,
@@ -40,8 +42,14 @@ class App extends React.Component {
   }
 
   fileSelected(file) {
+    console.log(file)
     this.setState({
       selectedFile: file.name
+    })
+    file.async("blob").then(blob => {
+      this.setState({
+          blob: URL.createObjectURL(blob)
+      })
     })
   }
 
@@ -49,6 +57,7 @@ class App extends React.Component {
     const loadedFile = this.state.file
     const zipArchive = this.state.zipArchive
     const selectedFile = this.state.selectedFile
+    const blob = this.state.blob
 
     if (loadedFile) {
       return (
@@ -57,7 +66,9 @@ class App extends React.Component {
             <img src={logo} className="App-logo" alt="logo" />
             <p>File loaded: {loadedFile.name}</p>
             <p><button onClick={this.closeFile}>Close</button></p>
-            <FileBrowser fileName={selectedFile} />
+            { selectedFile != null &&
+              <FileBrowser file={zipArchive.file(selectedFile)} blob={blob} />
+            }
           </header>
           <ZipBrowser zipArchive={loadedFile.name} files={zipArchive} onFileSelect={this.fileSelected} />
         </div>
@@ -69,7 +80,9 @@ class App extends React.Component {
           <header className="App-header">
             <img src={logo} className="App-logo" alt="logo" />
             <p>Please load a zip file</p>
-            <p><input type="file" id="fileInput" onChange={this.parseZip}></input></p>
+            <p>
+              <input type="file" accept=".epub,application/epub+zip" id="fileInput" onChange={this.parseZip}></input>
+              </p>
           </header>
         </div>
       )

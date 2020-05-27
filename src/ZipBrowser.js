@@ -4,6 +4,7 @@ class ZipBrowser extends React.Component {
 
     render() {
         const archiveLoaded = this.props.zipArchive != null
+        
         if (archiveLoaded) {
             const elements = []
             this.props.files.forEach((relativePath, zipObject) => 
@@ -13,7 +14,6 @@ class ZipBrowser extends React.Component {
                     </li>
                 )
             )
-
             return (
                 <div className="App-sidebar">
                     <p>Name: {this.props.zipArchive}</p>
