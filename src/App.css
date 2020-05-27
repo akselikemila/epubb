@@ -4,6 +4,7 @@
 
 .App-logo {
   height: 40vmin;
+  width: 40vmin;
   transition-property: transform;
   transition-duration: 0.5s;
   transition-timing-function: ease-in;
@@ -19,15 +20,14 @@
   background-color: #282c34;
   min-height: 100vh;
   max-height: 100vh;
-  overflow: scroll;
   display: flex;
   flex-direction: column;
   align-items: left;
   justify-content: left;
   font-size: 14px;
   color: white;
-  padding-left: 25vh;
-  padding-right: 25vh;
+  padding-left: 35vh;
+  padding-right: 35vh;
 }
 
 .App-link {
@@ -59,4 +59,10 @@
 .App-sidebar ul {
   list-style-type: none;
   font-size: 10px;
+}
+
+.App-fileBrowser {
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 10px;
+  color: #000000;
 }

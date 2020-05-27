@@ -7,7 +7,11 @@ class ZipBrowser extends React.Component {
         if (archiveLoaded) {
             const elements = []
             this.props.files.forEach((relativePath, zipObject) => 
-                elements.push(<li key={relativePath}>{relativePath}</li>)
+                elements.push(
+                    <li key={relativePath} onClick={this.props.onFileSelect.bind(this, zipObject)}>
+                        {relativePath}
+                    </li>
+                )
             )
 
             return (
