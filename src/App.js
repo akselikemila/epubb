@@ -44,12 +44,7 @@ class App extends React.Component {
   fileSelected(file) {
     console.log(file)
     this.setState({
-      selectedFile: file.name
-    })
-    file.async("blob").then(blob => {
-      this.setState({
-          blob: URL.createObjectURL(blob)
-      })
+      selectedFile: file
     })
   }
 
@@ -57,7 +52,6 @@ class App extends React.Component {
     const loadedFile = this.state.file
     const zipArchive = this.state.zipArchive
     const selectedFile = this.state.selectedFile
-    const blob = this.state.blob
 
     if (loadedFile) {
       return (
@@ -67,7 +61,7 @@ class App extends React.Component {
             <p>File loaded: {loadedFile.name}</p>
             <p><button onClick={this.closeFile}>Close</button></p>
             { selectedFile != null &&
-              <FileBrowser file={zipArchive.file(selectedFile)} blob={blob} />
+              <FileBrowser file={selectedFile} />
             }
           </header>
           <ZipBrowser zipArchive={loadedFile.name} files={zipArchive} onFileSelect={this.fileSelected} />
@@ -82,7 +76,7 @@ class App extends React.Component {
             <p>Please load a zip file</p>
             <p>
               <input type="file" accept=".epub,application/epub+zip" id="fileInput" onChange={this.parseZip}></input>
-              </p>
+            </p>
           </header>
         </div>
       )
