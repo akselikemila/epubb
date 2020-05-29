@@ -58,14 +58,17 @@ class App extends React.Component {
           <header className="App-header">
             <img src={logo} className="App-logo" alt="logo" />
             <dl>
-              <dt>File loaded:</dt>
+              <dt>Tiedosto:</dt>
               <dd>{loadedFile.name}</dd>
-              <dt>Modified:</dt>
+              <dt>Muokattu:</dt>
               <dd>{new Date(loadedFile.lastModified).toLocaleDateString()}</dd>
-              <dt>Size:</dt>
+              <dt>Koko:</dt>
               <dd>{loadedFile.size / 1000000} mt</dd>
             </dl>
-            <p><button onClick={this.closeFile}>Close</button></p>
+            <p>
+              <label for="closeFile">Sulje tiedosto</label>
+              <button onClick={this.closeFile} id="closeFile"></button>
+            </p>
             { selectedFile != null &&
               <FileBrowser file={selectedFile} />
             }
@@ -79,7 +82,7 @@ class App extends React.Component {
         <div className="App">
           <header className="App-header">
             <p>
-              <label for="fileInput">Load local file</label>
+              <label for="fileInput">Avaa paikallinen tiedosto</label>
               <input type="file" accept=".epub,application/epub+zip" id="fileInput" onChange={this.parseZip}></input>
             </p>
             <p></p>

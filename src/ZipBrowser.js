@@ -16,7 +16,7 @@ class ZipBrowser extends React.Component {
             )
             return (
                 <div className="App-sidebar">
-                    <p>Name: {this.props.zipArchive}</p>
+                    <h4>Tiedoston sisältö:</h4>
                     <ul>{elements}</ul>
                 </div>
             )
