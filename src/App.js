@@ -14,7 +14,6 @@ class App extends React.Component {
       file: null,
       zipArchive: null,
       selectedFile: null,
-      blob: null,
     }
 
     this.parseZip = this.parseZip.bind(this)
@@ -58,7 +57,14 @@ class App extends React.Component {
         <div className="App">
           <header className="App-header">
             <img src={logo} className="App-logo" alt="logo" />
-            <p>File loaded: {loadedFile.name}</p>
+            <dl>
+              <dt>File loaded:</dt>
+              <dd>{loadedFile.name}</dd>
+              <dt>Modified:</dt>
+              <dd>{new Date(loadedFile.lastModified).toLocaleDateString()}</dd>
+              <dt>Size:</dt>
+              <dd>{loadedFile.size / 1000000} mt</dd>
+            </dl>
             <p><button onClick={this.closeFile}>Close</button></p>
             { selectedFile != null &&
               <FileBrowser file={selectedFile} />
@@ -72,11 +78,12 @@ class App extends React.Component {
       return (
         <div className="App">
           <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>Please load a zip file</p>
             <p>
+              <label for="fileInput">Load local file</label>
               <input type="file" accept=".epub,application/epub+zip" id="fileInput" onChange={this.parseZip}></input>
             </p>
+            <p></p>
+            <p></p>
           </header>
         </div>
       )

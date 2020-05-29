@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+    epubb:
+        build: 
+            context: ./
+        image: akselikemila/epubb-static:local
+        ports:
+            - "8000:80"
