@@ -32,49 +32,7 @@
   color: #61dafb;
 }
 
-.App-sidebar {
-  position: fixed;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  top: 0;
-  left: 0;
-  min-height: 100vh;
-  max-height: 100vh;
-  min-width: 35vh;
-  max-width: 35vh;
-  transition-property: transform;
-  transition-duration: 0.25s;
-  transition-timing-function: ease-in;
-  transition-delay: 0;
-  transform: translate(-30vh, 0);
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
-.App-sidebar:hover {
-  transform: translate(0, 0);
-}
-
-.App-sidebar ul {
-  list-style-type: none;
-  font-size: 10px;
-}
-
-.App-sidebar li:hover {
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.App-fileBrowser {
-  background-color: rgba(255, 255, 255, 0.5);
-  padding: 25px;
-  color: #000000;
-}
-
-#fileBrowser-preview {
-  width: 100%;
-}
-
-input[type=file] {
+input {
   display: none;
 }
 

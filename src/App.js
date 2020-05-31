@@ -1,7 +1,9 @@
 import React from 'react';
+import JSZip from 'jszip';
+
 import logo from './logo.svg';
 import './App.css';
-import JSZip from 'jszip';
+
 import ZipBrowser from './ZipBrowser';
 import FileBrowser from './FileBrowser';
 
@@ -66,8 +68,9 @@ class App extends React.Component {
               <dd>{loadedFile.size / 1000000} mt</dd>
             </dl>
             <p>
-              <label for="closeFile">Sulje tiedosto</label>
+              <label htmlFor="closeFile">Sulje tiedosto</label>
               <button onClick={this.closeFile} id="closeFile"></button>
+              <label>Avaa sisällysluettelo</label>
             </p>
             { selectedFile != null &&
               <FileBrowser file={selectedFile} />
@@ -82,7 +85,7 @@ class App extends React.Component {
         <div className="App">
           <header className="App-header">
             <p>
-              <label for="fileInput">Avaa paikallinen tiedosto</label>
+              <label htmlFor="fileInput">Avaa paikallinen tiedosto</label>
               <input type="file" accept=".epub,application/epub+zip" id="fileInput" onChange={this.parseZip}></input>
             </p>
             <p></p>

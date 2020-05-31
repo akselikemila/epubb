@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './FileBrowser.css';
+
 class FileBrowser extends React.Component {
 
     constructor(props) {
@@ -11,7 +13,8 @@ class FileBrowser extends React.Component {
     }
 
     componentDidMount() {
-        this.props.file.async("blob").then(blob => {
+        let file = this.props.file;
+        file.async("blob").then(blob => {
             this.setState({
                 blob: URL.createObjectURL(blob)
             })
