@@ -68,8 +68,7 @@ class App extends React.Component {
               <dd>{loadedFile.size / 1000000} mt</dd>
             </dl>
             <p>
-              <label htmlFor="closeFile">Sulje tiedosto</label>
-              <button onClick={this.closeFile} id="closeFile"></button>
+              <label onClick={this.closeFile}>Sulje tiedosto</label>
               <label>Avaa sisällysluettelo</label>
             </p>
             { selectedFile != null &&

@@ -37,16 +37,22 @@ input {
 }
 
 label {
-  background-color: rgba(255, 255, 2555, 0.5);
-  padding: 1em 2em 1em 2em;
-  border-radius: 15px;
+  background-color: lightgreen;
+  padding: 0.5em 1em 0.5em 1em;
+  border-radius: 7px;
   font-size: 0.5cm;
   display: inline-block;
+  color: slategray;
+  box-shadow: darkslategrey;
 }
 
 label:hover {
-  background-color: rgba(255, 255, 2555, 0.25);
+  background-color: limegreen;
   cursor: pointer;
+}
+
+label:active {
+  color: darkslategrey
 }
 
 dd {
