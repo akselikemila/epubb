@@ -4,7 +4,7 @@ pipeline {
       label 'master'
     }
   }
-  tools {nodejs "12.17.0"}
+  tools {nodejs "default-12.17.0-LTS"}
   stages {
     stage('install') {
       steps {
