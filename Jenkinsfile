@@ -3,8 +3,8 @@ pipeline {
     node {
       label 'master'
     }
-
   }
+  tools {nodejs "12.17.0"}
   stages {
     stage('install') {
       steps {

@@ -85,7 +85,7 @@ class App extends React.Component {
           <header className="App-header">
             <p>
               <label htmlFor="fileInput">Avaa paikallinen tiedosto</label>
-              <input type="file" accept=".epub,application/epub+zip" id="fileInput" onChange={this.parseZip}></input>
+              <input type="file" accept="application/epub+zip" id="fileInput" onChange={this.parseZip}></input>
             </p>
             <p></p>
             <p></p>
