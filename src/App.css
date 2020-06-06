@@ -2,20 +2,6 @@
   text-align: left;
 }
 
-.App-logo {
-  height: 40vmin;
-  width: 40vmin;
-  transition-property: transform;
-  transition-duration: 0.5s;
-  transition-timing-function: ease-in;
-  transition-delay: 0;
-  /*transform: rotate(0deg);*/
-}
-
-.App-logo:hover {
-  transform: rotate(180deg);
-}
-
 .App-header {
   min-height: 100vh;
   display: flex;

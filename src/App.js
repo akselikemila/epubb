@@ -1,9 +1,9 @@
 import React from 'react';
 import JSZip from 'jszip';
 
-import logo from './logo.svg';
 import './App.css';
 
+import EpubUtil from './EpubUtils'
 import ZipBrowser from './ZipBrowser';
 import FileBrowser from './FileBrowser';
 
@@ -18,6 +18,7 @@ class App extends React.Component {
       selectedFile: null,
     }
 
+    this.parser = new EpubUtil()
     this.parseZip = this.parseZip.bind(this)
     this.closeFile = this.closeFile.bind(this)
     this.fileSelected = this.fileSelected.bind(this)
@@ -25,7 +26,12 @@ class App extends React.Component {
 
   parseZip(event) {
     const loadedFile = event.target.files[0];
-    console.log(loadedFile)
+    var parser = this.parser;
+
+    parser.load(loadedFile).then(msg => {
+      console.log(msg)
+      parser.getCover()
+    })
     JSZip.loadAsync(loadedFile).then(zip => {
       this.setState({
         file: loadedFile,
@@ -58,7 +64,6 @@ class App extends React.Component {
       return (
         <div className="App">
           <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
             <dl>
               <dt>Tiedosto:</dt>
               <dd>{loadedFile.name}</dd>
