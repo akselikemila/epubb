@@ -5,6 +5,14 @@ class EpubUtil {
     constructor() {
         this.zipArchive = null;
         this.rootFiles = []
+
+        this.version = 0
+        this.author = ''
+        this.title = ''
+        this.cover = ''
+        this.publisher = ''
+        this.date = null
+        this.meta = {}
     }
 
     load(file) {
@@ -19,8 +27,56 @@ class EpubUtil {
 
     getCover() {
         const root = this.rootFiles[0]
-        this.zipArchive.file(root).async('text').then(text => {
-            console.log(text)
+        const self = this;
+        return new Promise((rslt, fail) => {
+            var currentTag = null
+
+            self.zipArchive.file(root).async('text').then(text => {
+                var parser = SAX.parser(true)
+                parser.onopentag = tag => {
+                    currentTag = tag.name;
+                    switch (currentTag) {
+                        case 'package':
+                            self.version = tag.attributes.version
+                            break
+                        case 'meta':
+                            self.meta[tag.attributes.name] = tag.attributes.content
+                            break
+                        default:
+                            //console.log('Unhandled tag: ' + currentTag)
+                            break
+                    }
+                }
+                parser.ontext = text => {
+                    if (!text.trim()) return
+                    console.log(currentTag, text)
+                    switch (currentTag) {
+                        case 'dc:title':
+                            self.title = text
+                            break
+                        case 'dc:creator':
+                            self.author = text
+                            break
+                        case 'dc:publisher':
+                            self.publisher = text
+                            break
+                        case 'dc:date':
+                            self.date = text
+                            break
+                        default:
+                            break
+                    }
+                }
+                parser.onend = function() {
+                    console.log(self)
+                    rslt(self.cover)
+                }
+                parser.onerror = error => {
+                    console.log(error)
+                    fail('fail')
+                }
+                parser.write(text).close()
+            })
         })
     }
 
@@ -30,8 +86,9 @@ class EpubUtil {
      */
     listRootfiles(done) {
         const parser = SAX.parser(true)
+        const self = this
         parser.onattribute = attr => {
-            if (attr.name === 'full-path') this.rootFiles.push(attr.value)
+            if (attr.name === 'full-path') self.rootFiles.push(attr.value)
         }
 
         console.log('listRootfiles called')
@@ -41,9 +98,8 @@ class EpubUtil {
         this.zipArchive.file('META-INF/container.xml')
         .async('text')
         .then(text => {
-            console.log(text);
-            parser.write(text)
-            done('Hullo')
+            parser.write(text).close()
+            done(self.rootFiles)
         })
     }
 }
