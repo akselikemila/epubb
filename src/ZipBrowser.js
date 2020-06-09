@@ -3,14 +3,6 @@ import './ZipBrowser.css'
 
 class ZipBrowser extends React.Component {
 
-    constructor(props) {
-        super(props)
-
-        if (props.files) {
-            console.log(props.files)
-        }
-    }
-
     render() {
         const archiveLoaded = this.props.zipArchive != null
         

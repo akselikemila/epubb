@@ -16,6 +16,11 @@ class App extends React.Component {
       file: null,
       zipArchive: null,
       selectedFile: null,
+
+      title: '',
+      author: '',
+      publisher: '',
+      meta: {},
     }
 
     this.parser = new EpubUtil()
@@ -25,12 +30,21 @@ class App extends React.Component {
   }
 
   parseZip(event) {
+    const self = this;
     const loadedFile = event.target.files[0];
     var parser = this.parser;
 
     parser.load(loadedFile).then(msg => {
-      console.log(msg)
-      parser.getCover()
+      parser.getCover().then(cover => {
+        console.log(cover)
+        self.setState({
+          title: parser.title,
+          author: parser.author,
+          publisher: parser.publisher,
+          meta: parser.meta,
+          version: parser.version
+        })
+      })
     })
     JSZip.loadAsync(loadedFile).then(zip => {
       this.setState({
@@ -49,7 +63,6 @@ class App extends React.Component {
   }
 
   fileSelected(file) {
-    console.log(file)
     this.setState({
       selectedFile: file
     })
@@ -64,13 +77,16 @@ class App extends React.Component {
       return (
         <div className="App">
           <header className="App-header">
+            <img className="App-coverImage" />
             <dl>
-              <dt>Tiedosto:</dt>
-              <dd>{loadedFile.name}</dd>
-              <dt>Muokattu:</dt>
-              <dd>{new Date(loadedFile.lastModified).toLocaleDateString()}</dd>
-              <dt>Koko:</dt>
-              <dd>{loadedFile.size / 1000000} mt</dd>
+              <dt>Teos:</dt>
+              <dd>{this.state.title}</dd>
+              <dt>Kirjoittaja:</dt>
+              <dd>{this.state.author}</dd>
+              <dt>Julkaisija:</dt>
+              <dd>{this.state.publisher}</dd>
+              <dt>Versio:</dt>
+              <dd>{this.state.version}</dd>
             </dl>
             <p>
               <label onClick={this.closeFile}>Sulje tiedosto</label>

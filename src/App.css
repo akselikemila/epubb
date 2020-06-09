@@ -18,6 +18,10 @@
   color: #61dafb;
 }
 
+.App-coverImage {
+  max-width: 20vw;
+}
+
 input {
   display: none;
 }

@@ -4,8 +4,13 @@ import SAX from 'sax'
 class EpubUtil {
     constructor() {
         this.zipArchive = null;
-        this.rootFiles = []
 
+        this.reset()
+    }
+
+    reset() {
+        this.rootFiles = []
+        
         this.version = 0
         this.author = ''
         this.title = ''
@@ -13,9 +18,11 @@ class EpubUtil {
         this.publisher = ''
         this.date = null
         this.meta = {}
+        this.items = {}
     }
 
     load(file) {
+        this.reset()
         const self = this;
         return new Promise((rsl, reject) => {
             JSZip.loadAsync(file).then(zip => {
@@ -28,6 +35,7 @@ class EpubUtil {
     getCover() {
         const root = this.rootFiles[0]
         const self = this;
+        console.log(root)
         return new Promise((rslt, fail) => {
             var currentTag = null
 
@@ -42,6 +50,9 @@ class EpubUtil {
                         case 'meta':
                             self.meta[tag.attributes.name] = tag.attributes.content
                             break
+                        case 'item':
+                            self.items[tag.attributes.id] = tag.attributes.href
+                            break
                         default:
                             //console.log('Unhandled tag: ' + currentTag)
                             break
@@ -49,7 +60,7 @@ class EpubUtil {
                 }
                 parser.ontext = text => {
                     if (!text.trim()) return
-                    console.log(currentTag, text)
+
                     switch (currentTag) {
                         case 'dc:title':
                             self.title = text
@@ -68,11 +79,10 @@ class EpubUtil {
                     }
                 }
                 parser.onend = function() {
-                    console.log(self)
-                    rslt(self.cover)
+                    self.meta['cover'] = self.items[self.meta['cover']]
+                    rslt(self.meta['cover'])
                 }
                 parser.onerror = error => {
-                    console.log(error)
                     fail('fail')
                 }
                 parser.write(text).close()
