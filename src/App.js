@@ -1,10 +1,9 @@
 import React from 'react';
-import JSZip from 'jszip';
 
 import './App.css';
 
 import EpubUtil from './EpubUtils'
-import ZipBrowser from './ZipBrowser';
+import ItemBrowser from './ZipBrowser';
 import FileBrowser from './FileBrowser';
 
 class App extends React.Component {
@@ -13,14 +12,12 @@ class App extends React.Component {
     super(props)
 
     this.state = {
-      file: null,
-      zipArchive: null,
-      selectedFile: null,
-
+      fileName: null,
       title: '',
       author: '',
       publisher: '',
       meta: {},
+      items: []
     }
 
     this.parser = new EpubUtil()
@@ -32,45 +29,38 @@ class App extends React.Component {
   parseZip(event) {
     const self = this;
     const loadedFile = event.target.files[0];
-    var parser = this.parser;
+    const parser = this.parser;
 
-    parser.load(loadedFile).then(msg => {
-      parser.getCover().then(cover => {
-        console.log(cover)
-        self.setState({
-          title: parser.title,
-          author: parser.author,
-          publisher: parser.publisher,
-          meta: parser.meta,
-          version: parser.version
-        })
-      })
-    })
-    JSZip.loadAsync(loadedFile).then(zip => {
-      this.setState({
-        file: loadedFile,
-        zipArchive: zip
+    parser.load(loadedFile).then(() => {
+      self.setState({
+        fileName: loadedFile.name,
+        title: parser.title,
+        author: parser.author,
+        publisher: parser.publisher,
+        meta: parser.meta,
+        items: parser.items,
+        version: parser.version
       })
     })
   }
 
   closeFile(event) {
     this.setState({
-      file: null,
-      zipArchive: null,
-      selectedFile: null
+      fileName: null,
+      title: '',
+      author: '',
+      publisher: '',
+      meta: ''
     })
   }
 
   fileSelected(file) {
-    this.setState({
-      selectedFile: file
-    })
+    console.log('Selected file', file)
+    //this.setState({selectedFile: file})
   }
 
   render() {
-    const loadedFile = this.state.file
-    const zipArchive = this.state.zipArchive
+    const loadedFile = this.state.fileName != null
     const selectedFile = this.state.selectedFile
 
     if (loadedFile) {
@@ -92,11 +82,11 @@ class App extends React.Component {
               <label onClick={this.closeFile}>Sulje tiedosto</label>
               <label>Avaa sisällysluettelo</label>
             </p>
-            { selectedFile != null &&
+            {selectedFile != null &&
               <FileBrowser file={selectedFile} />
             }
           </header>
-          <ZipBrowser zipArchive={loadedFile.name} files={zipArchive} onFileSelect={this.fileSelected} />
+          <ItemBrowser zipArchive={this.state.fileName} files={this.state.items} onFileSelect={this.fileSelected} />
         </div>
       )
     }

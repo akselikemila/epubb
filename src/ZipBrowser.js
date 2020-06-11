@@ -1,20 +1,20 @@
 import React from 'react';
 import './ZipBrowser.css'
 
-class ZipBrowser extends React.Component {
+class ItemBrowser extends React.Component {
 
     render() {
         const archiveLoaded = this.props.zipArchive != null
-        
+
         if (archiveLoaded) {
             const elements = []
-            this.props.files.forEach((relativePath, zipObject) => 
+            for (let [key, data] of this.props.files) {
                 elements.push(
-                    <li key={relativePath} onClick={this.props.onFileSelect.bind(this, zipObject)}>
-                        {relativePath}
+                    <li key={key} onClick={this.props.onFileSelect.bind(this, key)}>
+                        {data.href}
                     </li>
                 )
-            )
+            }
             return (
                 <div className="App-sidebar">
                     <h4>Tiedoston sisältö:</h4>
@@ -33,4 +33,4 @@ class ZipBrowser extends React.Component {
 
 }
 
-export default ZipBrowser;
+export default ItemBrowser;
