@@ -26,6 +26,10 @@ class App extends React.Component {
     this.fileSelected = this.fileSelected.bind(this)
   }
 
+  /**
+   * 
+   * @param {Event} event 
+   */
   parseZip(event) {
     const self = this;
     const loadedFile = event.target.files[0];
@@ -39,8 +43,14 @@ class App extends React.Component {
         publisher: parser.publisher,
         meta: parser.meta,
         items: parser.items,
-        version: parser.version
+        version: parser.version,
+        cover: parser.cover
       })
+      parser.openResource(parser.cover).then(data => {
+        self.setState({
+          selectedFile: data
+        })
+      }, msg => console.log('Failed: ', msg))
     })
   }
 
@@ -55,7 +65,12 @@ class App extends React.Component {
   }
 
   fileSelected(file) {
-    console.log('Selected file', file)
+    const self = this
+    this.parser.openResource(file).then(data => {
+      self.setState({
+        selectedFile: data
+      })
+    }, msg => console.log('Failed: ', msg))
     //this.setState({selectedFile: file})
   }
 

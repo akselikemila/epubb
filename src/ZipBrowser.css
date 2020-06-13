@@ -13,7 +13,7 @@
     transition-timing-function: ease-in;
     transition-delay: 0;
     transform: translate(-30vh, 0);
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
   }
   
   .App-sidebar:hover {

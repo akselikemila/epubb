@@ -7,29 +7,28 @@ class FileBrowser extends React.Component {
     constructor(props) {
         super(props)
 
+        this.fileReader = new FileReader()
         this.state = {
             blob: ''
         }
     }
 
     componentDidMount() {
-        let file = this.props.file;
-        file.async("blob").then(blob => {
-            this.setState({
-                blob: URL.createObjectURL(blob)
-            })
+        this.setState({
+            blob: URL.createObjectURL(this.props.file)
         })
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.file.name === prevProps.file.name) return
+        if (this.props.file === prevProps.file) return
 
         if (this.state.blob) URL.revokeObjectURL(this.state.blob)
 
-        this.props.file.async("blob").then(blob => {
-            this.setState({
-                blob: URL.createObjectURL(blob)
-            })
+        let url = URL.createObjectURL(this.props.file)
+        console.log(this.props.file)
+
+        this.setState({
+            blob: url
         })
     }
 
@@ -38,12 +37,22 @@ class FileBrowser extends React.Component {
     }
 
     render() {
-        return (
-            <div className="App-fileBrowser">
-                <p>{this.props.file.name}</p>
-                <img id="fileBrowser-preview" alt={this.props.file.name} src={this.state.blob} />
-            </div>
-        )
+        if (this.props.file.type === 'image/jpg' || this.props.file.type === 'image/png' || this.props.file.type === 'image/jpeg') {
+            return (
+                <div className="App-fileBrowser">
+                    <p>{this.props.file.type}</p>
+                    <img id="fileBrowser-preview" alt={this.props.file.name} src={this.state.blob} />
+                </div>
+            )
+        }
+        else {
+            return (
+                <div className="App-fileBrowser">
+                    <p>{this.props.file.type}</p>
+                    <iframe src={this.state.blob}></iframe>
+                </div>
+            )
+        }
     }
 
 }

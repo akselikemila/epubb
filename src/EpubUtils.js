@@ -1,6 +1,13 @@
 import JSZip from 'jszip';
 import SAX from 'sax'
 
+const mimetypeMap = {
+    'text/html': 'text',
+    'application/xhtml+xml': 'text',
+    'image/jpeg': 'blob',
+    'image/png': 'blob',
+}
+
 class EpubUtil {
     constructor() {
         this.zipArchive = null;
@@ -19,8 +26,14 @@ class EpubUtil {
         this.date = null
         this.meta = {}
         this.items = new Map()
+        this.base = ''
     }
 
+    /**
+     * Loads an OCF file
+     * @param {File} file 
+     * @returns {Promise} 
+     */
     load(file) {
         this.reset()
         const self = this;
@@ -28,14 +41,23 @@ class EpubUtil {
             JSZip.loadAsync(file).then(zip => {
                 self.zipArchive = zip
                 self.listRootfiles().then(rootFile => {
-                    self.parseContentFile(rootFile).then(rsl)
+                    self.parsePackageDocument(rootFile).then(rsl)
                 })
             })
         })
     }
 
-    parseContentFile(root) {
+    /**
+     * Parses metadata from package document
+     * @param {string} root Path to file
+     */
+    parsePackageDocument(root) {
         const self = this;
+
+        const parts = root.split('/')
+        if (parts.length > 1) {
+            this.base = parts[0]
+        }
 
         return new Promise((rslt, fail) => {
             let currentTag = null
@@ -83,14 +105,26 @@ class EpubUtil {
                     }
                 }
                 parser.onend = () => {
-                    if (self.meta['cover'] && self.items.has(self.meta['cover'])) {
-                        self.meta['cover'] = self.items.get(self.meta['cover']).href
-                    }
+                    self.cover = self.meta['cover']
                         
                     rslt()
                 }
                 parser.onerror = error => fail(error)
                 parser.write(text).close()
+            })
+        })
+    }
+
+    openResource(id) {
+        const self = this;
+        return new Promise((success, fail) => {
+            const target = self.items.get(id)
+            if (!target) fail('Resource not found in manifest')
+            const fileType = mimetypeMap[target.mimetype]
+            if (!fileType) fail('Unknown mimetype ' + target.mimetype)
+            const absolutePath = self.base ? self.base + '/' + target.href : target.href
+            self.zipArchive.file(absolutePath).async(fileType).then(data => {
+                success(new Blob([data], {type:target.mimetype}))
             })
         })
     }
