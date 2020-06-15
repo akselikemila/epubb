@@ -70,7 +70,7 @@ class App extends React.Component {
       self.setState({
         selectedFile: data
       })
-    }, msg => console.log('Failed: ', msg))
+    }, msg => alert('Failed: ' + msg))
     //this.setState({selectedFile: file})
   }
 

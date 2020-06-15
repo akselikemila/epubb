@@ -24,11 +24,8 @@ class FileBrowser extends React.Component {
 
         if (this.state.blob) URL.revokeObjectURL(this.state.blob)
 
-        let url = URL.createObjectURL(this.props.file)
-        console.log(this.props.file)
-
         this.setState({
-            blob: url
+            blob: URL.createObjectURL(this.props.file)
         })
     }
 
@@ -49,7 +46,7 @@ class FileBrowser extends React.Component {
             return (
                 <div className="App-fileBrowser">
                     <p>{this.props.file.type}</p>
-                    <iframe src={this.state.blob}></iframe>
+                    <iframe src={this.state.blob} title={this.props.file.name}></iframe>
                 </div>
             )
         }

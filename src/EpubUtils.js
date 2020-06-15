@@ -6,11 +6,14 @@ const mimetypeMap = {
     'application/xhtml+xml': 'text',
     'image/jpeg': 'blob',
     'image/png': 'blob',
+    'application/x-dtbncx+xml': 'text'
 }
 
 class EpubUtil {
     constructor() {
         this.zipArchive = null;
+
+        window.EpubUtil = this
 
         this.reset()
     }
@@ -27,6 +30,8 @@ class EpubUtil {
         this.meta = {}
         this.items = new Map()
         this.base = ''
+        this.spine = []
+        this.toc = ''
     }
 
     /**
@@ -79,6 +84,12 @@ class EpubUtil {
                                 href: tag.attributes.href
                             })
                             break
+                        case 'itemref':
+                            self.spine.push(tag.attributes.idref)
+                            break
+                        case 'spine':
+                            self.toc = tag.attributes.toc
+                            break
                         default:
                             //console.log('Unhandled tag: ' + currentTag)
                             break
@@ -119,9 +130,15 @@ class EpubUtil {
         const self = this;
         return new Promise((success, fail) => {
             const target = self.items.get(id)
-            if (!target) fail('Resource not found in manifest')
+            if (!target) {
+                fail('Resource not found in manifest')
+                return
+            }
             const fileType = mimetypeMap[target.mimetype]
-            if (!fileType) fail('Unknown mimetype ' + target.mimetype)
+            if (!fileType) {
+                fail('Unknown mimetype ' + target.mimetype)
+                return
+            }
             const absolutePath = self.base ? self.base + '/' + target.href : target.href
             self.zipArchive.file(absolutePath).async(fileType).then(data => {
                 success(new Blob([data], {type:target.mimetype}))
