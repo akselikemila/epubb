@@ -1,5 +1,6 @@
 import JSZip from 'jszip';
 import SAX from 'sax'
+import TocParser from './TocParser';
 
 const mimetypeMap = {
     'text/html': 'text',
@@ -164,6 +165,22 @@ class EpubUtil {
 
             this.zipArchive.file('META-INF/container.xml').async('text').then(text => {
                 parser.write(text).close()
+            })
+        })
+    }
+
+    parseToc() {
+        const parser = new TocParser()
+        const self = this
+        const target = self.items.get(self.toc)
+        const absolutePath = self.base ? self.base + '/' + target.href : target.href
+        return new Promise((resolve, reject) => {
+            self.zipArchive.file(absolutePath).async('text')
+            .then(text => {
+                return parser.parse(text)
+            })
+            .then(toc => {
+                resolve(toc)
             })
         })
     }

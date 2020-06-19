@@ -34,6 +34,7 @@ label {
   display: inline-block;
   color: slategray;
   box-shadow: darkslategrey;
+  margin-right: 0.25em;
 }
 
 label:hover {

@@ -28,4 +28,5 @@
   .App-sidebar li:hover {
     text-decoration: underline;
     cursor: pointer;
+    color: lightgreen;
   }
