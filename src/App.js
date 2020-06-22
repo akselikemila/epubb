@@ -5,6 +5,7 @@ import './App.css';
 import EpubUtil from './EpubUtils'
 import ItemBrowser from './ZipBrowser';
 import FileBrowser from './FileBrowser';
+import Sisällysluettelo from './Sisällysluettelo';
 
 class App extends React.Component {
 
@@ -17,13 +18,16 @@ class App extends React.Component {
       author: '',
       publisher: '',
       meta: {},
-      items: []
+      items: [],
+      tocOpen: false,
+      toc: null
     }
 
     this.parser = new EpubUtil()
     this.parseZip = this.parseZip.bind(this)
     this.closeFile = this.closeFile.bind(this)
     this.fileSelected = this.fileSelected.bind(this)
+    this.avaaSisällys = this.avaaSisällys.bind(this)
   }
 
   /**
@@ -44,7 +48,9 @@ class App extends React.Component {
         meta: parser.meta,
         items: parser.items,
         version: parser.version,
-        cover: parser.cover
+        cover: parser.cover,
+        tocOpen: false,
+        toc: null
       })
       parser.openResource(parser.cover).then(data => {
         self.setState({
@@ -64,6 +70,16 @@ class App extends React.Component {
     })
   }
 
+  avaaSisällys(event) {
+    const self = this
+    this.parser.parseToc().then(sisällys => {
+      self.setState({
+        tocOpen: true,
+        toc: sisällys
+      })
+    })
+  }
+
   fileSelected(file) {
     const self = this
     this.parser.openResource(file).then(data => {
@@ -77,6 +93,8 @@ class App extends React.Component {
   render() {
     const loadedFile = this.state.fileName != null
     const selectedFile = this.state.selectedFile
+    const tocOpen = this.state.tocOpen
+    const sisällys = this.state.toc
 
     if (loadedFile) {
       return (
@@ -95,10 +113,13 @@ class App extends React.Component {
             </dl>
             <p>
               <label onClick={this.closeFile}>Sulje tiedosto</label>
-              <label>Avaa sisällysluettelo</label>
+              <label onClick={this.avaaSisällys}>Avaa sisällysluettelo</label>
             </p>
-            {selectedFile != null &&
+            {selectedFile != null && !tocOpen &&
               <FileBrowser file={selectedFile} />
+            }
+            {tocOpen &&
+              <Sisällysluettelo sisällys={sisällys} />
             }
           </header>
           <ItemBrowser zipArchive={this.state.fileName} files={this.state.items} onFileSelect={this.fileSelected} />

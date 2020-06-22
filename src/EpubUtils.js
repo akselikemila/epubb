@@ -33,6 +33,7 @@ class EpubUtil {
         this.base = ''
         this.spine = []
         this.toc = ''
+        this.parsedToc = null
     }
 
     /**
@@ -180,6 +181,7 @@ class EpubUtil {
                 return parser.parse(text)
             })
             .then(toc => {
+                self.parsedToc = toc
                 resolve(toc)
             })
         })
