@@ -15,8 +15,14 @@ class TocParser {
         this.reject = null
 
         this.toc = []
+        this.nodeStack = [this.toc]
     }
 
+    /**
+     * 
+     * @param {string} text
+     * @returns {Promise<Array>} 
+     */
     parse(text) {
         const self = this
         return new Promise((resolve, reject) => {
@@ -34,11 +40,14 @@ class TocParser {
     handleTag(tag) {
         switch (tag.name) {
             case 'navPoint':
-                this.toc.push({
+                let luku = {
                     id: tag.attributes.id,
                     label: '',
-                    href: ''
-                })
+                    href: '',
+                    children: []
+                }
+                this.nodeStack[this.nodeStack.length - 1].push(luku)
+                this.nodeStack.push(luku.children)
             case 'navLabel':
                 this.tagStack.push(tag.name)
                 break
@@ -53,6 +62,7 @@ class TocParser {
     handleTagClose(tag) {
         switch (tag.name) {
             case 'navPoint':
+                this.nodeStack.pop()
             case 'navLabel':
                 this.tagStack.pop()
                 break

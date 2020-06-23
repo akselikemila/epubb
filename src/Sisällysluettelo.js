@@ -1,12 +1,12 @@
 import React from 'react';
 
 function Sisällysluettelo(props) {
-    const listaItemit = props.sisällys.map((itemi) => <li key={itemi.id}>{itemi.label}</li>)
+    const luvut = props.sisällys.map((luku) => <li key={luku.id}>{luku.label}</li>)
 
     return (
         <div>
             <ul>
-                {listaItemit}
+                {luvut}
             </ul>
         </div>
     )

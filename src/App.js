@@ -6,6 +6,7 @@ import EpubUtil from './EpubUtils'
 import ItemBrowser from './ZipBrowser';
 import FileBrowser from './FileBrowser';
 import Sisällysluettelo from './Sisällysluettelo';
+import Virhe from './Virhe';
 
 class App extends React.Component {
 
@@ -17,14 +18,11 @@ class App extends React.Component {
       title: '',
       author: '',
       publisher: '',
-      meta: {},
       items: [],
-      tocOpen: false,
-      toc: null
     }
 
     this.parser = new EpubUtil()
-    this.parseZip = this.parseZip.bind(this)
+    this.avaaTiedosto = this.avaaTiedosto.bind(this)
     this.closeFile = this.closeFile.bind(this)
     this.fileSelected = this.fileSelected.bind(this)
     this.avaaSisällys = this.avaaSisällys.bind(this)
@@ -34,7 +32,7 @@ class App extends React.Component {
    * 
    * @param {Event} event 
    */
-  parseZip(event) {
+  avaaTiedosto(event) {
     const self = this;
     const loadedFile = event.target.files[0];
     const parser = this.parser;
@@ -45,18 +43,19 @@ class App extends React.Component {
         title: parser.title,
         author: parser.author,
         publisher: parser.publisher,
-        meta: parser.meta,
         items: parser.items,
         version: parser.version,
-        cover: parser.cover,
-        tocOpen: false,
-        toc: null
+        alikomponentti: null
       })
       parser.openResource(parser.cover).then(data => {
         self.setState({
-          selectedFile: data
+          alikomponentti: <FileBrowser file={data} />
         })
-      }, msg => console.log('Failed: ', msg))
+      }, msg => {
+        self.setState({
+          alikomponentti: <Virhe viesti={msg} />
+        })
+      })
     })
   }
 
@@ -66,7 +65,7 @@ class App extends React.Component {
       title: '',
       author: '',
       publisher: '',
-      meta: ''
+      alikomponentti: null
     })
   }
 
@@ -74,8 +73,7 @@ class App extends React.Component {
     const self = this
     this.parser.parseToc().then(sisällys => {
       self.setState({
-        tocOpen: true,
-        toc: sisällys
+        alikomponentti: <Sisällysluettelo sisällys={sisällys} />
       })
     })
   }
@@ -84,17 +82,18 @@ class App extends React.Component {
     const self = this
     this.parser.openResource(file).then(data => {
       self.setState({
-        selectedFile: data
+        alikomponentti: <FileBrowser file={data} />
       })
-    }, msg => alert('Failed: ' + msg))
-    //this.setState({selectedFile: file})
+    },msg => {
+      self.setState({
+        alikomponentti: <Virhe viesti={msg} />
+      })
+    })
   }
 
   render() {
     const loadedFile = this.state.fileName != null
-    const selectedFile = this.state.selectedFile
-    const tocOpen = this.state.tocOpen
-    const sisällys = this.state.toc
+    const alikomponentti = this.state.alikomponentti
 
     if (loadedFile) {
       return (
@@ -115,12 +114,7 @@ class App extends React.Component {
               <label onClick={this.closeFile}>Sulje tiedosto</label>
               <label onClick={this.avaaSisällys}>Avaa sisällysluettelo</label>
             </p>
-            {selectedFile != null && !tocOpen &&
-              <FileBrowser file={selectedFile} />
-            }
-            {tocOpen &&
-              <Sisällysluettelo sisällys={sisällys} />
-            }
+            {alikomponentti !== null && alikomponentti}
           </header>
           <ItemBrowser zipArchive={this.state.fileName} files={this.state.items} onFileSelect={this.fileSelected} />
         </div>
@@ -132,7 +126,7 @@ class App extends React.Component {
           <header className="App-header">
             <p>
               <label htmlFor="fileInput">Avaa paikallinen tiedosto</label>
-              <input type="file" accept="application/epub+zip" id="fileInput" onChange={this.parseZip}></input>
+              <input type="file" accept="application/epub+zip" id="fileInput" onChange={this.avaaTiedosto}></input>
             </p>
             <p></p>
             <p></p>
