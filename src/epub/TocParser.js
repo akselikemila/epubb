@@ -1,5 +1,14 @@
+/**
+ * @file Sisällysluettelon jäsentäjä
+ * @author Akseli Kemilä
+ */
+
 import SAX from 'sax'
 
+/**
+ * Sisällysluettelon jäsentäjä, luo XML:n pohjalta hierarkisen
+ * js-objektin sisällysluettelosta
+ */
 class TocParser {
     constructor() {
         this.parser = SAX.parser(true)

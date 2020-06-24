@@ -1,7 +1,17 @@
+/**
+ * @file Epub-dokumentteja käsittelevä luokka
+ * @author Akseli Kemilä
+ */
+
 import JSZip from 'jszip';
 import SAX from 'sax'
 import TocParser from './TocParser';
 
+/**
+ * Sitoo MIME-tyypit JSZip tyyppeihin
+ * @readonly
+ * @enum {string}
+ */
 const mimetypeMap = {
     'text/html': 'text',
     'application/xhtml+xml': 'text',
@@ -10,6 +20,9 @@ const mimetypeMap = {
     'application/x-dtbncx+xml': 'text'
 }
 
+/**
+ * Epub-dokumentteja käsittelevä luokka
+ */
 class EpubUtil {
     constructor() {
         this.zipArchive = null;
@@ -128,23 +141,46 @@ class EpubUtil {
         })
     }
 
-    openResource(id) {
+    /**
+     * 
+     * @param {string} path 
+     * @param {string} mimeType 
+     * @returns {Promise<Blob>}
+     */
+    openResourceByPath(path, mimeType) {
+        const self = this
+        return new Promise((resolve, reject) => {
+            const fileType = mimetypeMap[mimeType]
+            if (!fileType) {
+                reject('Unknown mimetype ' + mimeType)
+                return
+            }
+            const absolutePath = self.base ? self.base + '/' + path : path
+            const file = self.zipArchive.file(absolutePath)
+            if (file === null) {
+                reject('File not found: ' + absolutePath)
+                return
+            }
+            file.async(fileType).then(data => {
+                resolve(new Blob([data], {type:mimeType}))
+            })
+        })
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @returns {Promise<Blob>} 
+     */
+    openResourceById(id) {
         const self = this;
         return new Promise((success, fail) => {
             const target = self.items.get(id)
             if (!target) {
-                fail('Resource not found in manifest')
+                fail('Resource not found in manifest: ' + id)
                 return
             }
-            const fileType = mimetypeMap[target.mimetype]
-            if (!fileType) {
-                fail('Unknown mimetype ' + target.mimetype)
-                return
-            }
-            const absolutePath = self.base ? self.base + '/' + target.href : target.href
-            self.zipArchive.file(absolutePath).async(fileType).then(data => {
-                success(new Blob([data], {type:target.mimetype}))
-            })
+            self.openResourceByPath(target.href, target.mimetype).then(success, fail)
         })
     }
 

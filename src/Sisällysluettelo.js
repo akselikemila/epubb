@@ -1,7 +1,17 @@
+/**
+ * @file Sisällysluettelo UI-komponentti
+ * @author Akseli Kemilä
+ */
+
 import React from 'react';
 
 import './Sisällysluettelo.css';
 
+/**
+ * Sisällysluettelo UI-komponentti
+ * @param {*} props 
+ * @class
+ */
 function Sisällysluettelo(props) {
     function sisällysHelper(luku) {
         let aliluvut = luku.children.length > 0 ? <ul>{luku.children.map(sisällysHelper)}</ul> : null

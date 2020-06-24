@@ -14,12 +14,14 @@ class FileBrowser extends React.Component {
     }
 
     componentDidMount() {
+        console.log('Mounting FileBrowser')
         this.setState({
             blob: URL.createObjectURL(this.props.file)
         })
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log('Updating FileBrowser')
         if (this.props.file === prevProps.file) return
 
         if (this.state.blob) URL.revokeObjectURL(this.state.blob)
@@ -30,6 +32,7 @@ class FileBrowser extends React.Component {
     }
 
     componentWillUnmount() {
+        console.log('Unmounting FileBrowser')
         if (this.state.blob) URL.revokeObjectURL(this.state.blob)
     }
 

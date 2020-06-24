@@ -1,13 +1,22 @@
+/**
+ * @file Pää UI-komponentti
+ * @author Akseli Kemilä
+ */
+
 import React from 'react';
 
 import './App.css';
 
-import EpubUtil from './EpubUtils'
+import EpubUtil from './epub/EpubUtils'
 import ItemBrowser from './ZipBrowser';
 import FileBrowser from './FileBrowser';
 import Sisällysluettelo from './Sisällysluettelo';
 import Virhe from './Virhe';
 
+/**
+ * Pää UI-komponentti
+ * @extends React.Component
+ */
 class App extends React.Component {
 
   constructor(props) {
@@ -48,7 +57,7 @@ class App extends React.Component {
         version: parser.version,
         alikomponentti: null
       })
-      parser.openResource(parser.cover).then(data => {
+      parser.openResourceById(parser.cover).then(data => {
         self.setState({
           alikomponentti: <FileBrowser file={data} />
         })
@@ -80,13 +89,24 @@ class App extends React.Component {
   }
 
   avaaLuku(event) {
-    alert('Luku valittu' + event.target.href)
+    const self = this
+    const href = event.target.getAttribute('href').split('#')[0]
+    this.parser.openResourceByPath(href, 'application/xhtml+xml')
+    .then(blob => {
+      self.setState({
+        alikomponentti: <FileBrowser file={blob} />
+      })
+    }, error => {
+      self.setState({
+        alikomponentti: <Virhe viesti={error} />
+      })
+    })
     event.preventDefault()
   }
 
   fileSelected(file) {
     const self = this
-    this.parser.openResource(file).then(data => {
+    this.parser.openResourceById(file).then(data => {
       self.setState({
         alikomponentti: <FileBrowser file={data} />
       })
@@ -105,7 +125,6 @@ class App extends React.Component {
       return (
         <div className="App">
           <header className="App-header">
-            <img className="App-coverImage" />
             <dl>
               <dt>Teos:</dt>
               <dd>{this.state.title}</dd>
