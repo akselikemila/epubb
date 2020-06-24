@@ -26,6 +26,7 @@ class App extends React.Component {
     this.closeFile = this.closeFile.bind(this)
     this.fileSelected = this.fileSelected.bind(this)
     this.avaaSisällys = this.avaaSisällys.bind(this)
+    this.avaaLuku = this.avaaLuku.bind(this)
   }
 
   /**
@@ -73,9 +74,14 @@ class App extends React.Component {
     const self = this
     this.parser.parseToc().then(sisällys => {
       self.setState({
-        alikomponentti: <Sisällysluettelo sisällys={sisällys} />
+        alikomponentti: <Sisällysluettelo sisällys={sisällys} lukuValittu={self.avaaLuku} />
       })
     })
+  }
+
+  avaaLuku(event) {
+    alert('Luku valittu' + event.target.href)
+    event.preventDefault()
   }
 
   fileSelected(file) {

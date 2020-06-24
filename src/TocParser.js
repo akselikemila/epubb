@@ -15,7 +15,8 @@ class TocParser {
         this.reject = null
 
         this.toc = []
-        this.nodeStack = [this.toc]
+        this.lukuPino = [this.toc]
+        this.viimeisinLuku = null
     }
 
     /**
@@ -46,23 +47,26 @@ class TocParser {
                     href: '',
                     children: []
                 }
-                this.nodeStack[this.nodeStack.length - 1].push(luku)
-                this.nodeStack.push(luku.children)
+                this.lukuPino[this.lukuPino.length - 1].push(luku)
+                this.lukuPino.push(luku.children)
+                this.viimeisinLuku = luku
+                // eslint-disable-next-line
             case 'navLabel':
                 this.tagStack.push(tag.name)
                 break
             case 'content':
-                this.toc[this.toc.length - 1].href = tag.attributes.src
+                this.viimeisinLuku.href = tag.attributes.src
                 break
             default:
                 break
         }
     }
     
-    handleTagClose(tag) {
-        switch (tag.name) {
+    handleTagClose(tagName) {
+        switch (tagName) {
             case 'navPoint':
-                this.nodeStack.pop()
+                this.lukuPino.pop()
+                // eslint-disable-next-line
             case 'navLabel':
                 this.tagStack.pop()
                 break
@@ -73,7 +77,7 @@ class TocParser {
 
     handleText(text) {
         if (text.trim() && this.tagStack[this.tagStack.length - 1] === 'navLabel') {
-            this.toc[this.toc.length - 1].label = text
+            this.viimeisinLuku.label = text
         }
     }
 }
