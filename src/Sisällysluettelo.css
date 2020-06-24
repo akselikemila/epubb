@@ -1,0 +1,12 @@
+.sisallys {
+    background-color: lightgray;
+    padding: 25px;
+}
+
+.sisallys li {
+    list-style-type: none;
+}
+
+.sisallys a {
+    color: darkslategray
+}
